@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Quran Islamic</title>
+</head>
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    nav {
+      top: 0;
+      width: 100%;
+      height: 100px;
+      background-color: white;
+      display: flex;
+      position: fixed;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+    nav img {
+      padding: 0 70px;
+    }
+    nav .menu {
+      list-style: none;
+    }
+    nav .menu li {
+      display: inline-block;
+      line-height: 90px;
+      margin: 5px;
+    }
+    nav .menu li a {
+      padding: 10px 15px;
+      color: black;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    nav .menu li a:hover {
+      text-decoration: underline;
+    }
+    body {
+      margin-top: 110px;
+      background-image: url('islamic_background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      font-family: arial, sans-serif;
+  }
+  .container{
+    background-image: url('quran-banner.jpg');
+    margin: 10px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 40px;
+    border-radius: 7px;
+    font-size: 23px;
+  }
+  .row1 {
+    display: flex;
+    justify-content: space-between;
+  }
+  .row1-1{
+    width: 76%;
+    margin: 10px 5px 70px 10px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    background-color: white;
+  }
+  .row1-1 li{
+    list-style: none;
+    margin: 30px 0;
+    display: inline-block;
+  }
+  .row1-1 li a{
+    background-color: #ddd;
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+  }
+  .row1-1 li a:hover{
+    background-color: #ccc;
+  }
+  .row1-2{
+    width: 20%;
+    margin: 10px 10px 50px 5px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    background-color: white;
+    height: 380px;
+    right: 10px;
+    position: fixed;
+  }
+  .row1-2 p{
+    font-size: 23px;
+  }
+  .ayah{
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .ayah-number {
+      background: url('number-ayat.png') no-repeat center;
+      background-size: contain;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    .random-btn{
+      padding: 6px;
+    }
+    footer{
+      font-size: 20px;
+      padding: 20px;
+      background-color: white;
+      text-align: center;
+      bottom: 1px;
+      position: fixed;
+      width: 100%;
+    }
+</style>
+<nav>
+    <img src="alquran-logo.webp" alt="">
+    <ul class="menu"> 
+      <li><a href="homepage.html">Home</a></li>
+      <li><a href="searchSurah.html">Search Surah</a></li>
+      <li><a href="aboutAlquran.html">About Al-Quran</a></li>
+    </ul>
+</nav>
+<body>
+  <div class="container">
+    <h2>Welcome to Al-Quran Islamic</h2>
+    <p>This application is developed to help users explore and understand the Quran more easily, read digitally, and put spiritual notes at each surah.</p>
+  </div>
+  <div class="row1">
+    <div class="row1-1">
+      <h2>Read Random Ayah</h2>
+      <p>Read Quran everyday to improve your life</p><br>
+      <div id="random-ayahs-container">
+        <h3 id="surah-info"></h3> <!-- Surah name and Ayah range will be displayed here -->
+        <div id="random-ayahs"></div> <!-- random ayah display here -->
+      </div> <br>
+      <button onclick="fetchRandomAyahs()" class="random-btn">Random Ayah</button> <!-- click this and it will change the last surah to the new random one -->
+      <p>Read any surah <a href="searchSurah.html">here</a> </p> <br><br> <!-- Click at the link and it will redirect to search page -->
+      
+      <h2>Most Read Surah</h2>
+      <ul>
+        <li><a href="surahDetails.html?surah=36">Surah Yaseen</a></li> <!-- Redirect to yaseen details page -->
+        <li><a href="surahDetails.html?surah=18">Surah Al-Kahf</a></li> <!-- Redirect to Al-Kahf details page -->
+        <li><a href="surahDetails.html?surah=67">Surah Al-Mulk</a></li> <!-- Redirect to Al-Mulk details page -->
+      </ul>
+    </div>
+    <div class="row1-2">
+      <h2>Quran Quote</h2> <br>
+      <marquee behavior="" direction="up" width="100%" height="310px">
+        <p>Indeed, the mercy of Allah is near to the doers of good</p><br>
+        <p>Remember Allah, Allah will remember you</p><br>
+        <p>Indeed we belong to Allah, and indeed to Him we will return</p><br>
+        <p>Indeed, Allah is my Lord and your Lord, so worship Him. That is the straight path</p>
+      </marquee> <!-- Quran quote moving from bottom to top -->
+    </div>
+  </div>
+
+  <script>
+    function fetchRandomAyahs() {
+      let randomSurah = Math.floor(Math.random() * 114) + 1; // Random Surah between 1-114
+      fetch(`https://api.alquran.cloud/v1/surah/${randomSurah}`) //fetch API based on surah num
+        .then(response => response.json())
+        .then(data => {
+          let ayahs = data.data.ayahs;
+          let surahName = data.data.englishName; // Get Surah name
+          let startIdx = Math.floor(Math.random() * (ayahs.length - 4)); // Ensure we don't exceed last ayah
+          let selectedAyahs = ayahs.slice(startIdx, startIdx + 5); // Get 5 consecutive ayahs
+          
+          // Display Surah name and Ayah range
+          let surahInfo = document.getElementById('surah-info');
+          surahInfo.innerHTML = `<strong>${surahName}</strong>; Ayah ${selectedAyahs[0].numberInSurah} to ${selectedAyahs[4].numberInSurah}`;
+
+          let ayahContainer = document.getElementById('random-ayahs');
+          ayahContainer.innerHTML = ""; // Clear previous ayahs
+          
+          selectedAyahs.forEach(ayah => {
+            let ayahElement = document.createElement('p');
+            ayahElement.classList.add('ayah');
+            ayahElement.innerHTML = `<div class='ayah-number'>${ayah.numberInSurah}</div> ${ayah.text}`; //display the ayah
+            ayahContainer.appendChild(ayahElement);
+          });
+        })
+        .catch(error => console.error("Error fetching ayahs:", error));
+    }
+
+    window.onload = fetchRandomAyahs; //when reload page, will display another random page
+  </script>
+</body>
+<footer>
+  <p>&copy; Copyright Al-Quran Islamic</p>
+</footer>
+</html>

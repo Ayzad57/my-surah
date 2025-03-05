@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Surah details</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    nav {
+      top: 0;
+      width: 100%;
+      height: 100px;
+      background-color: white;
+      display: flex;
+      position: fixed;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+    nav img {
+      padding: 0 70px;
+    }
+    nav .menu {
+      list-style: none;
+    }
+    nav .menu li {
+      display: inline-block;
+      line-height: 90px;
+      margin: 5px;
+    }
+    nav .menu li a {
+      padding: 10px 15px;
+      color: black;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    nav .menu li a:hover {
+      text-decoration: underline;
+    }
+    body {
+      margin-top: 100px;
+      font-family: Arial, sans-serif;
+      background-image: url('islamic_background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+    .left-container {
+      margin: 10px 0 0 10px;
+      width: 30%;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      position: fixed;
+    }
+    .right-container {
+      margin: 115px 20px 70px 31%;
+      width: 68%;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      text-align: right;
+    }
+    .notes {
+      margin-top: 20px;
+      text-align: left;
+    }
+    #note-input {
+      padding: 5px;
+      width: 100%;
+    }
+    .note {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .note .edit-btn, .note .delete-btn, .add-btn{
+      padding: 5px;
+      width: 70px;
+    }
+    .ayah {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .ayah-number {
+      background: url('number-ayat.png') no-repeat center;
+      background-size: contain;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    footer{
+      font-size: 20px;
+      padding: 20px;
+      background-color: white;
+      text-align: center;
+      bottom: 1px;
+      position: fixed;
+      width: 100%;
+    }
+  </style>
+</head>
+<nav>
+  <img src="alquran-logo.webp" alt="">
+  <ul class="menu"> 
+    <li><a href="homepage.html">Home</a></li>
+    <li><a href="searchSurah.html">Search Surah</a></li>
+    <li><a href="aboutAlquran.html">About Al-Quran</a></li>
+  </ul>
+</nav>
+<body>
+  <div class="left-container">
+    <h1 id="surah-title"></h1> <!-- surah name in english and araic -->
+    <p id="surah-info"></p> <br> <!-- revelation type and num of ayahs -->
+    
+    <h2>Spiritual Notes</h2>
+    <textarea id="note-input" rows="4" placeholder="Write your spiritual discovery here..."></textarea><br> <!-- input bar -->
+    <button onclick="addNote()" class="add-btn">Add Note</button> <br><br> <!-- create process -->
+    
+    <h2>Update your spiritual note</h2>
+    <div class="notes" id="notes-container"></div> <!-- Display all created spiritual notes -->
+  </div>
+  
+  <div class="right-container">
+    <div id="ayahs-container"></div> <!-- list of surah ayah -->
+  </div>
+  <script>
+    let surahNumber = new URLSearchParams(window.location.search).get('surah'); //get the surah number from selected surah at searchSurah page
+    let notes = JSON.parse(localStorage.getItem(`surah-notes-${surahNumber}`)) || []; //retrieve data from localStorage, if no notes existed, it display empty array
+
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`) //fetch surah that have ayah
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('surah-title').textContent = `${data.data.englishName} (${data.data.name})`; //surah name in english and arabic
+            document.getElementById('surah-info').textContent = `Type: ${data.data.revelationType} - ${data.data.numberOfAyahs} Ayahs`; // //surah revelation type and num of ayahs
+            displayAyahs(data.data.ayahs); //pass to displayAyahs()
+        })
+        .catch(error => console.error("Error fetching Surah details:", error));
+
+        loadNotes();
+    });
+
+    function addNote() {
+        let noteText = document.getElementById('note-input').value;
+        if (noteText.trim() !== "") {
+            notes.push(noteText);
+            localStorage.setItem(`surah-notes-${surahNumber}`, JSON.stringify(notes)); //save spiritual note in localStorage, convert yo json string before storing it
+            document.getElementById('note-input').value = ""; //clear the note-input div
+            loadNotes();
+        }
+    }
+
+    function loadNotes() {
+        let notesContainer = document.getElementById('notes-container');
+        notesContainer.innerHTML = ""; // clear
+        notes.forEach((note, index) => {
+            let noteDiv = document.createElement('div');
+            noteDiv.classList.add('note'); // add class 'note'
+            noteDiv.innerHTML = `
+                ${note} 
+                <button class='edit-btn' onclick="editNote(${index})">Edit</button> 
+                <button class='delete-btn' onclick="deleteNote(${index})">Delete</button>
+            `; //display at HTML
+            notesContainer.appendChild(noteDiv);
+        });
+    }
+
+    function editNote(index) {
+        let newNote = prompt("Edit your note:", notes[index]);
+        if (newNote !== null && newNote.trim() !== "") { //not "" or null
+            notes[index] = newNote; // let notes hold the edited spiritual notes 
+            localStorage.setItem(`surah-notes-${surahNumber}`, JSON.stringify(notes)); //save in localstorage
+            loadNotes();
+        }
+    }
+
+    function deleteNote(index) {
+        if (confirm("Are you sure you want to delete this note?")) {
+            notes.splice(index, 1); //remove selected spiritual note
+            localStorage.setItem(`surah-notes-${surahNumber}`, JSON.stringify(notes)); //save in localstorage
+            loadNotes();
+        }
+    }
+
+    function displayAyahs(ayahs) {
+        let ayahsContainer = document.getElementById('ayahs-container');
+        ayahsContainer.innerHTML = ""; // clear
+        ayahs.forEach(ayah => {
+            let ayahDiv = document.createElement('div'); //add element 'div'
+            ayahDiv.classList.add('ayah'); //add class 'ayah'
+            ayahDiv.innerHTML = `<div class='ayah-number'>${ayah.numberInSurah}</div> ${ayah.text}`;
+            ayahsContainer.appendChild(ayahDiv);
+        });
+    }
+</script>
+</body>
+<footer>
+  <p>&copy; Copyright Al-Quran Islamic</p>
+</footer>
+</html>

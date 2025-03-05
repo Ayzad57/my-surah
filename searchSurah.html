@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Surah</title>
+</head>
+<style>
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    nav {
+      top: 0;
+      width: 100%;
+      height: 100px;
+      background-color: white;
+      display: flex;
+      position: fixed;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+    nav img {
+      padding: 0 70px;
+    }
+    nav .menu {
+      list-style: none;
+    }
+    nav .menu li {
+      display: inline-block;
+      line-height: 90px;
+      margin: 5px;
+    }
+    nav .menu li a {
+      padding: 10px 15px;
+      color: black;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    nav .menu li a:hover {
+      text-decoration: underline;
+    }
+  body {
+      margin-top: 100px;
+      background-image: url('islamic_background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      text-align: center;
+      font-family: arial, sans-serif;
+  }
+  .container {
+      padding: 20px;
+      background-color: white;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      margin: 120px 290px 70px 290px;
+      border-radius: 20px;
+  }
+  .search-box {
+      margin-bottom: 20px;
+  }
+  .search-box #search-surah {
+    padding-left: 10px;
+    width: 250px;
+    height: 30px;
+  }
+  .search-box button {
+    width: 70px;
+    height: 30px;
+  }
+  #surah-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      justify-content: center;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+  }
+  .surah-card {
+      background: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      font-size: 18px;
+      cursor: pointer; /* change from arrow to hand when hovering */
+  }
+  .surah-card:hover{
+    background-color: rgb(234, 234, 234);
+  }
+  footer{
+      font-size: 20px;
+      padding: 20px;
+      background-color: white;
+      text-align: center;
+      bottom: 1px;
+      position: fixed;
+      width: 100%;
+    }
+</style>
+<nav>
+  <img src="alquran-logo.webp" alt="">
+  <ul class="menu"> 
+    <li><a href="homepage.html">Home</a></li>
+    <li><a href="searchSurah.html">Search Surah</a></li>
+    <li><a href="aboutAlquran.html">About Al-Quran</a></li>
+  </ul>
+</nav>
+<body>
+  <div class="container">
+    <h1>Search Surah</h1> <br>
+    <div class="search-box">
+      <input type="text" id="search-surah" placeholder="Enter surah"> <!-- search bar -->
+      <button onclick="searchSurah()">Search</button> <!-- search button -->
+    </div>
+    <h2>Click Surah to add notes or read quran</h2>
+    <div id="surah-container"></div> <!-- all the surah card will display here, search result also -->
+  </div>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      fetchSurahs();
+  }); // code inside the function runs only after HTML has been fully loaded
+
+  function fetchSurahs() {
+      fetch('https://api.alquran.cloud/v1/surah') //fetch API
+      .then(response => response.json())
+      .then(data => {
+          let surahContainer = document.getElementById('surah-container');
+          surahContainer.innerHTML = ""; //clear the container
+
+          data.data.forEach(surah => {
+              let surahCard = document.createElement('div');
+              surahCard.classList.add('surah-card'); //add class named 'surah-card'
+              surahCard.innerHTML = `${surah.number}. ${surah.englishName} (${surah.name})<br>Type: ${surah.revelationType} - ${surah.numberOfAyahs} Ayahs`; //display at html
+              surahCard.onclick = () => window.location.href = `surahDetails.html?surah=${surah.number}`; //clickable surah
+              surahContainer.appendChild(surahCard);
+          });
+      })
+      .catch(error => console.error("Error fetching Surahs:", error));
+  }
+
+  function searchSurah() {
+      let input = document.getElementById('search-surah').value.toLowerCase(); //set searched data to lowercase
+      let items = document.querySelectorAll('.surah-card'); //find the same as the searched data 
+      
+      items.forEach(item => {
+          if (item.textContent.toLowerCase().includes(input)) { //if find data in lowercase
+              item.style.display = "block";
+          } else {
+              item.style.display = "none";
+          }
+      });
+  }
+</script>
+<footer>
+  <p>&copy; Copyright Al-Quran Islamic</p>
+</footer>
+</html>
